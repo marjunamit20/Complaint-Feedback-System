@@ -1,0 +1,194 @@
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/admin-dashboard">
+      <span class="brand-logo">CF</span>
+      <span><strong>CFMS</strong><small>Admin Portal</small></span>
+    </a>
+
+    <p class="menu-label">MAIN MENU</p>
+
+    <nav class="nav-menu">
+      <a routerLink="/admin-dashboard" routerLinkActive="active">
+        <span>▦</span> Dashboard
+      </a>
+      <a routerLink="/manage-complaints" routerLinkActive="active">
+        <span>▤</span> Manage Complaints
+      </a>
+      <a routerLink="/manage-users" routerLinkActive="active">
+        <span>♙</span> Manage Users
+      </a>
+      <a routerLink="/admin-feedback" routerLinkActive="active">
+        <span>☆</span> Feedback
+      </a>
+    </nav>
+
+    <div class="sidebar-help">
+      <span class="help-icon">?</span>
+      <strong>Admin Support</strong>
+      <p>Manage accounts and keep user records organized.</p>
+    </div>
+
+    <a class="signout" routerLink="/login">↪ Sign Out</a>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">CFMS / ADMINISTRATION</p>
+        <h1>Manage Users</h1>
+        <p class="subtitle">View registered accounts and manage their access status.</p>
+      </div>
+
+      <div class="admin-profile">
+        <span class="avatar">AD</span>
+        <span><strong>System Administrator</strong><small>Administrator</small></span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <p class="eyebrow light">USER MANAGEMENT</p>
+        <h2>Manage your community accounts.</h2>
+        <p>Review user information, check account status, and organize registered users.</p>
+      </div>
+      <div class="hero-mark">CF</div>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-top"><span>Total Users</span><span class="stat-icon blue">♙</span></div>
+        <h2>{{ users.length }}</h2>
+        <small>All registered accounts</small>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top"><span>Active Accounts</span><span class="stat-icon green">✓</span></div>
+        <h2>{{ activeCount }}</h2>
+        <small>Currently active</small>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top"><span>Inactive Accounts</span><span class="stat-icon orange">◷</span></div>
+        <h2>{{ inactiveCount }}</h2>
+        <small>Currently inactive</small>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top"><span>Complainants</span><span class="stat-icon purple">▤</span></div>
+        <h2>{{ complainantCount }}</h2>
+        <small>Registered complainants</small>
+      </article>
+    </section>
+
+    <div class="notice" *ngIf="notice">{{ notice }}</div>
+
+    <section class="records-card">
+      <div class="records-heading">
+        <div>
+          <h2>Registered Users</h2>
+          <p>Search accounts and update their status.</p>
+        </div>
+        <span class="record-count">{{ filteredUsers.length }} users</span>
+      </div>
+
+      <div class="filters">
+        <input
+          type="search"
+          [(ngModel)]="searchText"
+          placeholder="⌕  Search name, email, or role..."
+          aria-label="Search users">
+
+        <select [(ngModel)]="roleFilter" aria-label="Filter by role">
+          <option value="All">All Roles</option>
+          <option value="Complainant">Complainant</option>
+          <option value="Staff">Staff</option>
+          <option value="Administrator">Administrator</option>
+        </select>
+
+        <select [(ngModel)]="statusFilter" aria-label="Filter by account status">
+          <option value="All">All Statuses</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+
+        <button class="clear-button" type="button" (click)="clearFilters()">Clear</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>USER</th>
+              <th>EMAIL ADDRESS</th>
+              <th>ROLE</th>
+              <th>DATE JOINED</th>
+              <th>ACCOUNT STATUS</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let user of filteredUsers">
+              <td>
+                <div class="user-cell">
+                  <span class="user-avatar">{{ user.name.charAt(0) }}</span>
+                  <div><strong>{{ user.name }}</strong><small>#{{ user.id }}</small></div>
+                </div>
+              </td>
+              <td>{{ user.email }}</td>
+              <td><span class="role-badge">{{ user.role }}</span></td>
+              <td>{{ user.dateJoined }}</td>
+              <td>
+                <span class="account-status" [ngClass]="user.status.toLowerCase()">
+                  {{ user.status }}
+                </span>
+              </td>
+              <td>
+                <button
+                  *ngIf="user.status === 'Active'"
+                  class="action-button deactivate"
+                  type="button"
+                  (click)="updateStatus(user, 'Inactive')">
+                  Deactivate
+                </button>
+
+                <button
+                  *ngIf="user.status === 'Inactive'"
+                  class="action-button activate"
+                  type="button"
+                  (click)="updateStatus(user, 'Active')">
+                  Activate
+                </button>
+
+                
+                  <button
+                  class="action-button delete"
+                  type="button"
+                  *ngIf="user.role !== 'Administrator'"
+                  (click)="deleteUser(user)">
+                  Delete
+                  </button>
+
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredUsers.length === 0">
+              <td colspan="6" class="empty-state">No users match your search or filters.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="table-footer">
+        <span>Showing {{ filteredUsers.length }} of {{ users.length }} users</span>
+        <span>Account changes are currently stored in the page's local state.</span>
+      </footer>
+    </section>
+
+    <footer class="page-footer">
+      <span>© 2026 Complaint and Feedback Management System</span>
+      <span>Transparent. Responsive. Accountable.</span>
+    </footer>
+  </main>
+</div>

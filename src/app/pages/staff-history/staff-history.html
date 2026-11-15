@@ -1,0 +1,149 @@
+
+<div class="staff-layout">
+  <aside class="sidebar">
+    <a routerLink="/staff-dashboard" class="brand">
+      <span class="brand-logo">CF</span>
+      <span class="brand-text">
+        <strong>CFMS</strong>
+        <small>Staff Portal</small>
+      </span>
+    </a>
+
+    <p class="menu-label">MAIN MENU</p>
+
+    <nav class="navigation">
+      <a routerLink="/staff-dashboard" routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }">
+        <span class="nav-icon">▦</span>
+        Dashboard
+      </a>
+
+      <a routerLink="/staff-complaints" routerLinkActive="active">
+        <span class="nav-icon">▤</span>
+        My Assigned Complaints
+      </a>
+
+      <a routerLink="/staff-history" routerLinkActive="active">
+        <span class="nav-icon">◷</span>
+        Complaint History
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="help-card">
+        <strong>Staff Workspace</strong>
+        <p>Review previously handled complaints and recorded resolutions.</p>
+      </div>
+
+      <a routerLink="/login" class="signout-link">
+        <span>↪</span> Sign Out
+      </a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <p class="eyebrow">CFMS / STAFF</p>
+      <h1>Complaint History</h1>
+      <p class="subtitle">
+        Review previously handled complaints and recorded resolutions.
+      </p>
+    </header>
+
+    <section class="history-card">
+      <div class="card-header">
+        <div>
+          <h2>Previously Handled Complaints</h2>
+          <p>Complaints handled by your staff account.</p>
+        </div>
+
+        <span class="record-count">
+          {{ filteredHistory.length }} records
+        </span>
+      </div>
+
+      <div class="filters">
+        <input
+          type="text"
+          placeholder="Search reference, subject, or category..."
+          [(ngModel)]="searchText"
+          aria-label="Search complaint history">
+
+        <select [(ngModel)]="statusFilter" aria-label="Filter by status">
+          <option value="All">All Statuses</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Closed">Closed</option>
+        </select>
+
+        <button type="button" class="clear-button" (click)="clearFilters()">
+          Clear
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="message-state">
+        Loading complaint history...
+      </div>
+
+      <div *ngIf="errorMessage && !loading" class="error-state">
+        {{ errorMessage }}
+      </div>
+
+      <div
+        *ngIf="!loading && !errorMessage && filteredHistory.length === 0"
+        class="empty-state">
+
+        <div class="empty-icon">◷</div>
+        <h3>No complaint history yet</h3>
+        <p>
+          Once you handle and update assigned complaints, their history
+          and recorded resolutions can appear here.
+        </p>
+
+        <a routerLink="/staff-complaints" class="primary-button">
+          View Assigned Complaints
+        </a>
+      </div>
+
+      <div
+        *ngIf="!loading && !errorMessage && filteredHistory.length > 0"
+        class="table-wrapper">
+
+        <table>
+          <thead>
+            <tr>
+              <th>Reference Number</th>
+              <th>Complaint Subject</th>
+              <th>Category</th>
+              <th>Status</th>
+              <th>Last Update</th>
+              <th>Resolution Details</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of filteredHistory">
+              <td class="reference">{{ item.id }}</td>
+              <td class="subject">{{ item.subject }}</td>
+              <td>{{ item.category }}</td>
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="item.status.toLowerCase().replace(' ', '-')">
+                  {{ item.status }}
+                </span>
+              </td>
+              <td>{{ item.lastUpdated || '—' }}</td>
+              <td>{{ item.resolution || 'Not recorded' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>CFMS — Complaint and Feedback Management System</span>
+      <span>Staff Portal</span>
+    </footer>
+  </main>
+</div>

@@ -1,0 +1,360 @@
+
+<div class="staff-layout">
+  <aside class="sidebar">
+    <a routerLink="/staff-dashboard" class="brand">
+      <span class="brand-logo">CF</span>
+      <span class="brand-text">
+        <strong>CFMS</strong>
+        <small>Staff Portal</small>
+      </span>
+    </a>
+
+    <p class="menu-label">MAIN MENU</p>
+
+    <nav class="navigation">
+      <a
+        routerLink="/staff-dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <span class="nav-icon">▦</span>
+        Dashboard
+      </a>
+
+      <a
+        routerLink="/staff-complaints"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <span class="nav-icon">▤</span>
+        My Assigned Complaints
+      </a>
+
+      <a routerLink="/staff-history" routerLinkActive="active">
+        <span class="nav-icon">◷</span>
+        Complaint History
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="help-card">
+        <strong>Staff Workspace</strong>
+        <p>Review assigned complaints and track your actions.</p>
+      </div>
+
+      <a routerLink="/login" class="signout-link">
+        <span>↪</span> Sign Out
+      </a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <p class="eyebrow">CFMS / STAFF</p>
+      <h1>My Assigned Complaints</h1>
+      <p class="subtitle">
+        View and manage complaints assigned to you.
+      </p>
+    </header>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <span class="stat-label">Total Assigned</span>
+        <strong>{{ totalCount }}</strong>
+        <small>Assigned to your account</small>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Pending</span>
+        <strong>{{ pendingCount }}</strong>
+        <small>Awaiting action</small>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">In Progress</span>
+        <strong>{{ progressCount }}</strong>
+        <small>Currently being handled</small>
+      </article>
+
+      <article class="stat-card">
+        <span class="stat-label">Resolved</span>
+        <strong>{{ resolvedCount }}</strong>
+        <small>Completed complaints</small>
+      </article>
+    </section>
+
+    <section class="complaints-card">
+      <div class="card-header">
+        <div>
+          <h2>Assigned Complaints</h2>
+          <p>Search and filter your assigned records.</p>
+        </div>
+
+        <span class="record-count">
+          {{ filteredComplaints.length }} records
+        </span>
+      </div>
+
+      <div class="filters">
+        <input
+          type="text"
+          [(ngModel)]="searchText"
+          placeholder="Search reference, subject, category, or location..."
+          aria-label="Search complaints">
+
+        <select [(ngModel)]="statusFilter" aria-label="Filter status">
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Assigned">Assigned</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+
+        <select [(ngModel)]="priorityFilter" aria-label="Filter priority">
+          <option value="All">All Priorities</option>
+          <option value="High">High</option>
+          <option value="Normal">Normal</option>
+          <option value="Low">Low</option>
+        </select>
+
+        <button
+          type="button"
+          class="clear-button"
+          (click)="clearFilters()">
+          Clear
+        </button>
+      </div>
+
+      <div *ngIf="loading" class="message-state">
+        Loading complaint information...
+      </div>
+
+      <div *ngIf="errorMessage && !loading" class="error-state">
+        {{ errorMessage }}
+      </div>
+
+      <div
+        *ngIf="!loading && !errorMessage && filteredComplaints.length === 0"
+        class="empty-state">
+
+        <div class="empty-icon">▤</div>
+        <h3>No assigned complaints found</h3>
+
+        <p *ngIf="complaints.length === 0">
+          There are currently no complaints assigned to this staff account.
+          Once an administrator assigns a complaint, it can appear here.
+        </p>
+
+        <p *ngIf="complaints.length > 0">
+          No complaints match your search or selected filters.
+          Try changing your filters.
+        </p>
+
+        <button
+          *ngIf="complaints.length > 0"
+          type="button"
+          class="primary-button"
+          (click)="clearFilters()">
+          Clear Filters
+        </button>
+      </div>
+
+      <div
+        *ngIf="!loading && !errorMessage && filteredComplaints.length > 0"
+        class="table-wrapper">
+
+        <table>
+          <thead>
+            <tr>
+              <th>Reference Number</th>
+              <th>Subject</th>
+              <th>Category</th>
+              <th>Priority</th>
+              <th>Date Submitted / Assigned</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let complaint of filteredComplaints">
+              <td class="reference">{{ complaint.id }}</td>
+              <td class="subject">{{ complaint.subject }}</td>
+              <td>{{ complaint.category }}</td>
+
+              <td>
+                <span
+                  class="priority-badge"
+                  [ngClass]="complaint.priority.toLowerCase()">
+                  {{ complaint.priority }}
+                </span>
+              </td>
+
+              <td>{{ complaint.assignedAt || complaint.date || '—' }}</td>
+
+              <td>
+                <span
+                  class="status-badge"
+                  [ngClass]="complaint.status.toLowerCase().replace(' ', '-')">
+                  {{ complaint.status }}
+                </span>
+              </td>
+
+              <td>
+                <button
+                  type="button"
+                  class="view-button"
+                  (click)="viewDetails(complaint)">
+                  View Details
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>CFMS — Complaint and Feedback Management System</span>
+      <span>Staff Portal</span>
+    </footer>
+  </main>
+</div>
+
+<!-- Complaint Details Modal -->
+<div
+  class="modal-backdrop"
+  *ngIf="selectedComplaint as complaint"
+  (click)="closeDetails()">
+
+  <section
+    class="details-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="complaint-detail-title"
+    (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div>
+        <p class="eyebrow">COMPLAINT DETAILS</p>
+        <h2 id="complaint-detail-title">{{ complaint.id }}</h2>
+      </div>
+
+      <button
+        type="button"
+        class="close-button"
+        aria-label="Close details"
+        (click)="closeDetails()">
+        ×
+      </button>
+    </div>
+
+    <div class="detail-content">
+      <div class="detail-field">
+        <span>Subject</span>
+        <strong>{{ complaint.subject }}</strong>
+      </div>
+
+      <div class="detail-field">
+        <span>Category</span>
+        <strong>{{ complaint.category }}</strong>
+      </div>
+
+      <div class="detail-field">
+        <span>Complainant</span>
+        <strong>{{ complaint.complainant || 'Not available' }}</strong>
+      </div>
+
+      <div class="detail-field">
+        <span>Location</span>
+        <strong>{{ complaint.location || 'Not specified' }}</strong>
+      </div>
+
+      <div class="detail-field">
+        <span>Date Submitted</span>
+        <strong>{{ complaint.date || 'Not available' }}</strong>
+      </div>
+
+      <div class="detail-field">
+        <span>Priority</span>
+        <strong>{{ complaint.priority }}</strong>
+      </div>
+
+      <div class="detail-field">
+        <span>Current Status</span>
+        <strong>{{ complaint.status }}</strong>
+      </div>
+
+      <div class="detail-field full-width">
+        <span>Description</span>
+        <p>{{ complaint.description || 'No description available.' }}</p>
+      </div>
+    </div>
+
+    <!-- Staff Progress Update Controls -->
+    <div class="staff-update-section">
+      <div class="update-heading">
+        <h3>Update Complaint Progress</h3>
+        <p>Record your progress or mark the complaint as resolved.</p>
+      </div>
+
+      <div class="update-form">
+        <div class="form-group">
+          <label for="staff-status">Update Status</label>
+
+          <select
+            id="staff-status"
+            [(ngModel)]="newStatus"
+            name="newStatus">
+
+            <option value="In Progress">In Progress</option>
+            <option value="Resolved">Resolved</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="staff-progress">Progress Message</label>
+
+          <textarea
+            id="staff-progress"
+            [(ngModel)]="progressMessage"
+            name="progressMessage"
+            rows="4"
+            placeholder="Describe the actions taken or progress made...">
+          </textarea>
+        </div>
+
+        <div class="form-group" *ngIf="newStatus === 'Resolved'">
+          <label for="staff-resolution">Resolution Details</label>
+
+          <textarea
+            id="staff-resolution"
+            [(ngModel)]="resolution"
+            name="resolution"
+            rows="3"
+            placeholder="Explain how the complaint was resolved...">
+          </textarea>
+        </div>
+
+        <div class="form-note">
+          Please provide a progress message before saving your update.
+          Resolution details are required when marking a complaint as resolved.
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="secondary-button"
+        (click)="closeDetails()">
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="primary-button"
+        (click)="updateStatus(complaint, newStatus)">
+        Save Update
+      </button>
+    </div>
+  </section>
+</div>

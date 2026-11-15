@@ -1,0 +1,436 @@
+<div class="admin-layout">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">CF</div>
+      <div>
+        <h2>CFMS</h2>
+        <p>Admin Portal</p>
+      </div>
+    </div>
+
+    <div class="menu-label">MAIN MENU</div>
+
+    <nav class="navigation">
+      <a routerLink="/admin-dashboard"
+         routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }"
+         class="nav-link">
+        <span class="nav-icon">▦</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a routerLink="/manage-complaints"
+         routerLinkActive="active"
+         class="nav-link">
+        <span class="nav-icon">▤</span>
+        <span>Manage Complaints</span>
+      </a>
+
+      <a routerLink="/manage-users"
+         routerLinkActive="active"
+         class="nav-link">
+        <span class="nav-icon">♙</span>
+        <span>Manage Users</span>
+      </a>
+
+      <a routerLink="/admin-feedback"
+         routerLinkActive="active"
+         class="nav-link">
+        <span class="nav-icon">☆</span>
+        <span>Feedback</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="help-card">
+        <div class="help-icon">?</div>
+        <h4>Need assistance?</h4>
+        <p>Review user feedback to help improve the CFMS experience.</p>
+      </div>
+
+      <a routerLink="/login" class="sign-out">
+        <span>↪</span> Sign Out
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- PAGE HEADER -->
+    <header class="page-header">
+      <div>
+        <div class="breadcrumb">CFMS / ADMINISTRATION</div>
+        <h1>Admin Feedback</h1>
+        <p class="page-description">
+          Review user feedback, ratings, and suggestions.
+        </p>
+      </div>
+
+      <div class="admin-profile">
+        <div class="profile-avatar">AD</div>
+        <div>
+          <strong>System Administrator</strong>
+          <span>Administrator</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- HERO BANNER -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <span class="eyebrow">USER EXPERIENCE CENTER</span>
+        <h2>Listen, learn, and improve.</h2>
+        <p>
+          Review feedback from complainants and use their suggestions
+          to improve the Complaint and Feedback Management System.
+        </p>
+      </div>
+
+      <div class="hero-icon">☆</div>
+    </section>
+
+    <!-- SUMMARY CARDS -->
+    <section class="stats-grid">
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Total Feedback</span>
+          <div class="stat-icon blue">▤</div>
+        </div>
+        <h2>{{ totalFeedback }}</h2>
+        <p>All submitted feedback</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Pending Review</span>
+          <div class="stat-icon orange">◷</div>
+        </div>
+        <h2>{{ pendingCount }}</h2>
+        <p>Awaiting administrator review</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Reviewed</span>
+          <div class="stat-icon purple">✓</div>
+        </div>
+        <h2>{{ reviewedCount }}</h2>
+        <p>Reviewed by the administrator</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Average Rating</span>
+          <div class="stat-icon green">★</div>
+        </div>
+        <h2>{{ averageRating }}<small> / 5</small></h2>
+        <p>Average user satisfaction</p>
+      </article>
+
+    </section>
+
+    <!-- FEEDBACK RECORDS -->
+    <section class="records-card">
+
+      <div class="records-heading">
+        <div>
+          <h2>Feedback Records</h2>
+          <p>Search, review, and respond to user feedback.</p>
+        </div>
+
+        <span class="record-count">
+          {{ filteredFeedback.length }}
+          {{ filteredFeedback.length === 1 ? 'record' : 'records' }}
+        </span>
+      </div>
+
+      <!-- SEARCH AND FILTERS -->
+      <div class="filters">
+        <div class="search-box">
+          <span class="search-icon">⌕</span>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            placeholder="Search reference, user, email, or comment..."
+            aria-label="Search feedback"
+          />
+        </div>
+
+        <select [(ngModel)]="selectedStatus" aria-label="Filter by status">
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="Reviewed">Reviewed</option>
+          <option value="Responded">Responded</option>
+        </select>
+
+        <select [(ngModel)]="selectedRating" aria-label="Filter by rating">
+          <option value="All">All Ratings</option>
+          <option value="5">5 Stars</option>
+          <option value="4">4 Stars</option>
+          <option value="3">3 Stars</option>
+          <option value="2">2 Stars</option>
+          <option value="1">1 Star</option>
+        </select>
+
+        <button class="clear-button" type="button" (click)="clearFilters()">
+          Clear
+        </button>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>REFERENCE NO.</th>
+              <th>USER</th>
+              <th>RATING</th>
+              <th>FEEDBACK</th>
+              <th>DATE SUBMITTED</th>
+              <th>STATUS</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (feedback of filteredFeedback; track feedback.id) {
+              <tr>
+                <td>
+                  <span class="reference">{{ feedback.reference }}</span>
+                </td>
+
+                <td>
+                  <div class="user-cell">
+                    <div class="user-avatar">
+                      {{ feedback.userName.charAt(0) }}
+                    </div>
+                    <div class="user-details">
+                      <strong>{{ feedback.userName }}</strong>
+                      <span>{{ feedback.email }}</span>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="stars" [attr.aria-label]="feedback.rating + ' out of 5 stars'">
+                    {{ getStars(feedback.rating) }}
+                  </span>
+                  <span class="rating-number">{{ feedback.rating }}/5</span>
+                </td>
+
+                <td>
+                  <div class="comment-preview" [title]="feedback.comment">
+                    {{ feedback.comment }}
+                  </div>
+                </td>
+
+                <td class="date-cell">{{ feedback.date }}</td>
+
+                <td>
+                  <span class="status-badge"
+                    [ngClass]="{
+                      'pending': feedback.status === 'Pending',
+                      'reviewed': feedback.status === 'Reviewed',
+                      'responded': feedback.status === 'Responded'
+                    }">
+                    <span class="status-dot"></span>
+                    {{ feedback.status }}
+                  </span>
+                </td>
+
+                <td>
+                  <div class="action-buttons">
+                    <button
+                      type="button"
+                      class="view-button"
+                      (click)="openDetails(feedback)"
+                      title="View feedback details">
+                      View
+                    </button>
+
+                    <button
+                      type="button"
+                      class="reply-button"
+                      (click)="openReply(feedback)"
+                      title="Reply to feedback">
+                      Reply
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="7" class="empty-state">
+                  <div class="empty-icon">⌕</div>
+                  <h3>No feedback found</h3>
+                  <p>Try changing your search term or filters.</p>
+                  <button class="clear-button" (click)="clearFilters()">
+                    Clear Filters
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <span>
+          Showing {{ filteredFeedback.length }} of {{ totalFeedback }} feedback records
+        </span>
+        <span>CFMS · Feedback Management</span>
+      </div>
+
+    </section>
+
+    <footer class="page-footer">
+      <span>© 2026 Complaint and Feedback Management System</span>
+      <span>Transparent. Responsive. Accountable.</span>
+    </footer>
+
+  </main>
+</div>
+
+<!-- VIEW DETAILS MODAL -->
+@if (showDetails && selectedFeedback) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <section
+      class="modal-card"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="details-title"
+      (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">FEEDBACK DETAILS</span>
+          <h2 id="details-title">Review Feedback</h2>
+        </div>
+        <button class="close-button" (click)="closeModal()" aria-label="Close">
+          ×
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="detail-row">
+          <span>Reference Number</span>
+          <strong>{{ selectedFeedback.reference }}</strong>
+        </div>
+
+        <div class="detail-row">
+          <span>Submitted By</span>
+          <strong>{{ selectedFeedback.userName }}</strong>
+        </div>
+
+        <div class="detail-row">
+          <span>Email Address</span>
+          <strong>{{ selectedFeedback.email }}</strong>
+        </div>
+
+        <div class="detail-row">
+          <span>Date Submitted</span>
+          <strong>{{ selectedFeedback.date }}</strong>
+        </div>
+
+        <div class="detail-row">
+          <span>Rating</span>
+          <strong class="stars">
+            {{ getStars(selectedFeedback.rating) }}
+            ({{ selectedFeedback.rating }}/5)
+          </strong>
+        </div>
+
+        <div class="comment-panel">
+          <h3>User Comment</h3>
+          <p>{{ selectedFeedback.comment }}</p>
+        </div>
+
+        @if (selectedFeedback.reply) {
+          <div class="reply-panel">
+            <h3>Administrator Response</h3>
+            <p>{{ selectedFeedback.reply }}</p>
+          </div>
+        }
+
+        <div class="detail-row">
+          <span>Status</span>
+          <strong>{{ selectedFeedback.status }}</strong>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        @if (selectedFeedback.status === 'Pending') {
+          <button class="secondary-button"
+            (click)="markReviewed(selectedFeedback)">
+            Mark as Reviewed
+          </button>
+        }
+
+        <button class="primary-button"
+          (click)="openReply(selectedFeedback)">
+          {{ selectedFeedback.reply ? 'Edit Reply' : 'Reply to Feedback' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}
+
+<!-- REPLY MODAL -->
+@if (showReply && selectedFeedback) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <section
+      class="modal-card reply-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="reply-title"
+      (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <div>
+          <span class="eyebrow">ADMINISTRATOR RESPONSE</span>
+          <h2 id="reply-title">Reply to Feedback</h2>
+        </div>
+        <button class="close-button" (click)="closeModal()" aria-label="Close">
+          ×
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="reply-to">
+          <strong>{{ selectedFeedback.userName }}</strong>
+          <span>{{ selectedFeedback.reference }}</span>
+          <p>{{ selectedFeedback.comment }}</p>
+        </div>
+
+        <label for="adminReply">Your Response</label>
+        <textarea
+          id="adminReply"
+          [(ngModel)]="replyText"
+          rows="5"
+          maxlength="1000"
+          placeholder="Write a helpful and professional response..."
+        ></textarea>
+
+        <span class="character-count">
+          {{ replyText.length }}/1000 characters
+        </span>
+      </div>
+
+      <div class="modal-actions">
+        <button class="secondary-button" (click)="closeModal()">
+          Cancel
+        </button>
+        <button
+          class="primary-button"
+          [disabled]="!replyText.trim()"
+          (click)="sendReply()">
+          Save Response
+        </button>
+      </div>
+    </section>
+  </div>
+}

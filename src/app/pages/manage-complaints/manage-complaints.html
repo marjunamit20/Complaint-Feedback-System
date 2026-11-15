@@ -1,0 +1,219 @@
+
+<div class="admin-layout">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/admin-dashboard">
+      <span class="brand-logo">CF</span>
+      <span>
+        <strong>CFMS</strong>
+        <small>Admin Portal</small>
+      </span>
+    </a>
+
+    <p class="menu-label">MAIN MENU</p>
+
+    <nav class="nav-menu">
+      <a routerLink="/admin-dashboard" routerLinkActive="active">
+        <span>▦</span> Dashboard
+      </a>
+      <a routerLink="/manage-complaints" routerLinkActive="active">
+        <span>▤</span> Manage Complaints
+      </a>
+      <a routerLink="/manage-users" routerLinkActive="active">
+        <span>♙</span> Manage Users
+      </a>
+      <a routerLink="/admin-feedback" routerLinkActive="active">
+        <span>☆</span> Feedback
+      </a>
+    </nav>
+
+    <div class="sidebar-help">
+      <span class="help-icon">?</span>
+      <strong>Admin Support</strong>
+      <p>Review complaints and keep records updated.</p>
+    </div>
+
+    <a class="signout" routerLink="/login">↪ Sign Out</a>
+  </aside>
+
+  <main class="main-content">
+    <header class="page-header">
+      <div>
+        <p class="eyebrow">CFMS / ADMINISTRATION</p>
+        <h1>Manage Complaints</h1>
+        <p class="subtitle">Review, prioritize, and update submitted complaints.</p>
+      </div>
+
+      <div class="admin-profile">
+        <span class="avatar">AD</span>
+        <span><strong>System Administrator</strong><small>Administrator</small></span>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div>
+        <p class="eyebrow light">COMPLAINT MANAGEMENT</p>
+        <h2>Every concern deserves attention.</h2>
+        <p>Monitor submitted complaints and keep their progress up to date.</p>
+      </div>
+      <div class="hero-mark">CF</div>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-top"><span>Total Complaints</span><span class="stat-icon blue">▤</span></div>
+        <h2>{{ complaints.length }}</h2>
+        <small>All complaint records</small>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top"><span>Pending</span><span class="stat-icon orange">◷</span></div>
+        <h2>{{ pendingCount }}</h2>
+        <small>Awaiting review</small>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top"><span>In Progress</span><span class="stat-icon purple">↻</span></div>
+        <h2>{{ progressCount }}</h2>
+        <small>Currently being handled</small>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top"><span>Resolved</span><span class="stat-icon green">✓</span></div>
+        <h2>{{ resolvedCount }}</h2>
+        <small>Successfully addressed</small>
+      </article>
+    </section>
+
+    <section class="urgent-banner">
+      <span class="urgent-icon">!</span>
+      <div><strong>High Priority Complaints</strong><p>Complaints requiring additional attention.</p></div>
+      <strong class="urgent-count">{{ urgentCount }}</strong>
+    </section>
+
+    <div class="notice" *ngIf="notice">{{ notice }}</div>
+
+    <section class="records-card">
+      <div class="records-heading">
+        <div>
+          <h2>Complaint Records</h2>
+          <p>Search, review, and update submitted complaints.</p>
+        </div>
+        <span class="record-count">{{ filteredComplaints.length }} records</span>
+      </div>
+
+      <div class="filters">
+        <input
+          type="search"
+          [(ngModel)]="searchText"
+          placeholder="⌕  Search reference, subject, category, or complainant..."
+          aria-label="Search complaints">
+
+        <select [(ngModel)]="statusFilter" aria-label="Filter by status">
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+        </select>
+
+        <select [(ngModel)]="priorityFilter" aria-label="Filter by priority">
+          <option value="All">All Priorities</option>
+          <option value="High">High</option>
+          <option value="Normal">Normal</option>
+          <option value="Low">Low</option>
+        </select>
+
+        <button class="clear-button" type="button" (click)="clearFilters()">Clear</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>REFERENCE NO.</th>
+              <th>COMPLAINT DETAILS</th>
+              <th>COMPLAINANT</th>
+              <th>DATE SUBMITTED</th>
+              <th>PRIORITY</th>
+              <th>STATUS</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let c of filteredComplaints">
+              <td><strong class="reference">{{ c.id }}</strong></td>
+              <td>
+                <strong>{{ c.subject }}</strong>
+                <small class="subtext">{{ c.category }}</small>
+              </td>
+              <td>{{ c.complainant }}</td>
+              <td>{{ c.date }}</td>
+              <td><span class="priority" [ngClass]="c.priority.toLowerCase()">{{ c.priority }}</span></td>
+              <td>
+                <select
+                  class="status-select"
+                  [ngModel]="c.status"
+                  (ngModelChange)="updateStatus(c, $event)"
+                  [attr.aria-label]="'Update status for ' + c.id">
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Resolved">Resolved</option>
+                </select>
+              </td>
+              <td>
+                <button class="details-button" type="button" (click)="viewDetails(c)">
+                  View Details →
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredComplaints.length === 0">
+              <td colspan="7" class="empty-state">No complaints match your search or filters.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="table-footer">
+        <span>Showing {{ filteredComplaints.length }} of {{ complaints.length }} complaints</span>
+        <span>Complaint progress is subject to staff updates.</span>
+      </footer>
+    </section>
+
+    <footer class="page-footer">
+      <span>© 2026 Complaint and Feedback Management System</span>
+      <span>Transparent. Responsive. Accountable.</span>
+    </footer>
+  </main>
+</div>
+
+<div class="modal-backdrop" *ngIf="selectedComplaint" (click)="closeDetails()">
+  <section class="details-modal" role="dialog" aria-modal="true"
+    aria-labelledby="details-title" (click)="$event.stopPropagation()">
+    <div class="modal-heading">
+      <div>
+        <p class="eyebrow">COMPLAINT DETAILS</p>
+        <h2 id="details-title">{{ selectedComplaint.subject }}</h2>
+        <p class="subtitle">{{ selectedComplaint.id }}</p>
+      </div>
+      <button class="close-button" type="button" (click)="closeDetails()" aria-label="Close">×</button>
+    </div>
+
+    <div class="detail-grid">
+      <div><small>Complainant</small><strong>{{ selectedComplaint.complainant }}</strong></div>
+      <div><small>Category</small><strong>{{ selectedComplaint.category }}</strong></div>
+      <div><small>Date Submitted</small><strong>{{ selectedComplaint.date }}</strong></div>
+      <div><small>Location</small><strong>{{ selectedComplaint.location }}</strong></div>
+      <div><small>Priority</small><strong>{{ selectedComplaint.priority }}</strong></div>
+      <div><small>Status</small><strong>{{ selectedComplaint.status }}</strong></div>
+    </div>
+
+    <div class="description-box">
+      <strong>Complaint Description</strong>
+      <p>{{ selectedComplaint.description }}</p>
+    </div>
+
+    <div class="modal-actions">
+      <button class="secondary-button" type="button" (click)="closeDetails()">Close</button>
+    </div>
+  </section>
+</div>

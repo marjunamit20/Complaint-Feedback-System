@@ -1,0 +1,290 @@
+<div class="admin-layout">
+
+  <aside class="sidebar">
+    <a routerLink="/admin-dashboard" class="brand">
+      <span class="brand-logo">CF</span>
+      <span>
+        <strong>CFMS</strong>
+        <small>Admin Portal</small>
+      </span>
+    </a>
+
+    <div class="menu-label">MAIN MENU</div>
+
+    <nav class="navigation">
+      <a
+        routerLink="/admin-dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span class="nav-icon">▦</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a
+        routerLink="/manage-complaints"
+        routerLinkActive="active"
+      >
+        <span class="nav-icon">▤</span>
+        <span>Manage Complaints</span>
+      </a>
+
+      <a
+        routerLink="/manage-users"
+        routerLinkActive="active"
+      >
+        <span class="nav-icon">♙</span>
+        <span>Manage Users</span>
+      </a>
+
+      <!-- ADMIN FEEDBACK PAGE -->
+      <a
+        routerLink="/admin-feedback"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        <span class="nav-icon">☆</span>
+        <span>Feedback</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="help-card">
+        <span class="help-icon">?</span>
+        <strong>Admin Support</strong>
+        <p>Manage complaints and monitor community concerns.</p>
+      </div>
+
+      <button
+        type="button"
+        class="signout-button"
+        (click)="signOut()"
+      >
+        ↪ Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+
+    <header class="topbar">
+      <div>
+        <span class="eyebrow">CFMS / ADMINISTRATION</span>
+        <h1>Admin Dashboard</h1>
+        <p>Monitor complaints and manage system activity.</p>
+      </div>
+
+      <div class="admin-profile">
+        <div class="avatar">AD</div>
+        <div>
+          <strong>System Administrator</strong>
+          <small>Administrator</small>
+        </div>
+      </div>
+    </header>
+
+    <section class="welcome-banner">
+      <div class="welcome-content">
+        <span class="banner-label">ADMINISTRATOR OVERVIEW</span>
+        <h2>Welcome to CFMS Admin!</h2>
+        <p>
+          Review complaints, update their status, and help ensure
+          every concern is addressed.
+        </p>
+
+        <a routerLink="/manage-complaints" class="primary-button">
+          Manage Complaints <span>→</span>
+        </a>
+      </div>
+
+      <div class="banner-logo">CF</div>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Total Complaints</span>
+          <span class="stat-icon blue">▤</span>
+        </div>
+        <strong class="stat-number">{{ totalComplaints }}</strong>
+        <small>All complaint records</small>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Pending</span>
+          <span class="stat-icon orange">◷</span>
+        </div>
+        <strong class="stat-number">{{ pendingCount }}</strong>
+        <small>Awaiting review</small>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>In Progress</span>
+          <span class="stat-icon purple">↻</span>
+        </div>
+        <strong class="stat-number">{{ inProgressCount }}</strong>
+        <small>Currently being handled</small>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Resolved</span>
+          <span class="stat-icon green">✓</span>
+        </div>
+        <strong class="stat-number">{{ resolvedCount }}</strong>
+        <small>Successfully addressed</small>
+      </article>
+    </section>
+
+    <section class="priority-banner">
+      <div>
+        <span class="priority-symbol">!</span>
+        <div>
+          <strong>Urgent Complaints</strong>
+          <p>Complaints that may require immediate attention.</p>
+        </div>
+      </div>
+
+      <strong class="urgent-number">{{ urgentCount }}</strong>
+    </section>
+
+    <section class="records-card">
+      <div class="records-header">
+        <div>
+          <h2>Complaint Records</h2>
+          <p>Search, review, and update submitted complaints.</p>
+        </div>
+
+        <span class="record-count">
+          {{ filteredComplaints.length }} records
+        </span>
+      </div>
+
+      <div class="filters">
+        <label class="search-box">
+          <span>⌕</span>
+          <input
+            type="search"
+            [(ngModel)]="searchTerm"
+            placeholder="Search reference, subject, category, or complainant..."
+          />
+        </label>
+
+        <select
+          [(ngModel)]="statusFilter"
+          aria-label="Filter by status"
+        >
+          <option value="All">All Statuses</option>
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Resolved">Resolved</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+
+        <select
+          [(ngModel)]="priorityFilter"
+          aria-label="Filter by priority"
+        >
+          <option value="All">All Priorities</option>
+          <option value="Urgent">Urgent</option>
+          <option value="High">High</option>
+          <option value="Normal">Normal</option>
+          <option value="Low">Low</option>
+        </select>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>REFERENCE NO.</th>
+              <th>COMPLAINT DETAILS</th>
+              <th>COMPLAINANT</th>
+              <th>DATE SUBMITTED</th>
+              <th>PRIORITY</th>
+              <th>STATUS</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let complaint of filteredComplaints">
+              <td>
+                <strong class="reference">
+                  {{ complaint.id }}
+                </strong>
+              </td>
+
+              <td>
+                <strong>{{ complaint.subject }}</strong>
+                <small class="cell-subtitle">
+                  {{ complaint.category }}
+                </small>
+              </td>
+
+              <td>{{ complaint.complainant }}</td>
+              <td>{{ complaint.date }}</td>
+
+              <td>
+                <span
+                  class="priority-badge"
+                  [ngClass]="complaint.priority.toLowerCase()"
+                >
+                  {{ complaint.priority }}
+                </span>
+              </td>
+
+              <td>
+                <select
+                  class="status-select"
+                  [ngClass]="complaint.status.toLowerCase().replace(' ', '-')"
+                  [ngModel]="complaint.status"
+                  (ngModelChange)="updateStatus(complaint, $event)"
+                  [attr.aria-label]="'Status for ' + complaint.id"
+                >
+                  <option value="Pending">Pending</option>
+                  <option value="In Progress">In Progress</option>
+                  <option value="Resolved">Resolved</option>
+                  <option value="Rejected">Rejected</option>
+                </select>
+              </td>
+
+              <td>
+                <button
+                  type="button"
+                  class="view-button"
+                  (click)="viewComplaint(complaint)"
+                >
+                  View Details →
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredComplaints.length === 0">
+              <td colspan="7" class="empty-state">
+                <span>⌕</span>
+                <strong>No complaints found</strong>
+                <p>Try changing your search or filters.</p>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <footer class="table-footer">
+        Showing {{ filteredComplaints.length }} of
+        {{ totalComplaints }} complaints
+
+        <span>Complaint progress is subject to staff updates.</span>
+      </footer>
+    </section>
+
+    <footer class="page-footer">
+      <span>© 2026 Complaint and Feedback Management System</span>
+      <span>Transparent. Responsive. Accountable.</span>
+    </footer>
+
+  </main>
+</div>

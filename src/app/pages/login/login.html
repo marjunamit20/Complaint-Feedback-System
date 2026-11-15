@@ -1,0 +1,80 @@
+
+<div class="login-container">
+  <section class="brand-panel">
+    <div class="brand-content">
+      <div class="brand-logo">CF</div>
+      <span class="eyebrow">YOUR VOICE MATTERS</span>
+      <h1>Complaint &amp; Feedback Management System</h1>
+      <p>
+        Submit your concerns, track progress, and help us
+        improve our services through transparent communication.
+      </p>
+      <div class="brand-footer">
+        <strong>CFMS</strong>
+        <span>Transparent. Responsive. Accountable.</span>
+      </div>
+    </div>
+  </section>
+
+  <main class="form-panel">
+    <div class="form-wrapper">
+      <span class="form-eyebrow">WELCOME BACK</span>
+      <h2>Sign in to your account</h2>
+      <p class="subtitle">Enter your account details to continue.</p>
+
+      <form (ngSubmit)="onLogin()" #loginForm="ngForm">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input
+            id="email"
+            type="email"
+            name="email"
+            [(ngModel)]="email"
+            placeholder="you@example.com"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="password-wrapper">
+            <input
+              id="password"
+              [type]="showPassword ? 'text' : 'password'"
+              name="password"
+              [(ngModel)]="password"
+              placeholder="Enter your password"
+              autocomplete="current-password"
+              required
+            />
+            <button
+              type="button"
+              class="show-button"
+              (click)="showPassword = !showPassword"
+            >
+              {{ showPassword ? 'Hide' : 'Show' }}
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-button">
+          Sign In <span aria-hidden="true">→</span>
+        </button>
+      </form>
+
+      <p class="security-note">
+        🔒 Your account information is protected.
+      </p>
+
+      <p class="signin-text">
+        Don't have an account?
+        <a routerLink="/register">Create an account</a>
+      </p>
+
+      <p class="staff-note">
+        Authorized staff and administrators must use their assigned accounts.
+      </p>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,269 @@
+
+<div class="dashboard-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <a routerLink="/dashboard" class="brand">
+      <div class="brand-logo">CF</div>
+      <div class="brand-text">
+        <strong>CFMS</strong>
+        <span>Complaint &amp; Feedback</span>
+      </div>
+    </a>
+
+    <div class="nav-label">MAIN MENU</div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <span class="nav-icon">⌂</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a routerLink="/complaints" routerLinkActive="active" class="nav-link">
+        <span class="nav-icon">＋</span>
+        <span>Submit Complaint</span>
+      </a>
+
+      <a routerLink="/my-complaints" routerLinkActive="active" class="nav-link">
+        <span class="nav-icon">▤</span>
+        <span>My Complaints</span>
+      </a>
+
+      <a routerLink="/feedback" routerLinkActive="active" class="nav-link">
+        <span class="nav-icon">☆</span>
+        <span>Feedback</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="help-card">
+        <div class="help-icon">?</div>
+        <strong>Need assistance?</strong>
+        <p>Contact your assigned staff for help with your concern.</p>
+        <a routerLink="/feedback">Get assistance <span>→</span></a>
+      </div>
+
+      <button class="signout-link" type="button" (click)="signOut()">
+        <span>↪</span> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- TOP BAR -->
+    <header class="topbar">
+      <div>
+        <div class="breadcrumb">CFMS <span>/</span> OVERVIEW</div>
+        <h1>Dashboard</h1>
+        <p class="page-subtitle">
+          Welcome back! Here's an overview of your complaints.
+        </p>
+      </div>
+
+      <div class="profile-card">
+        <div class="profile-avatar">{{ initials }}</div>
+        <div class="profile-info">
+          <strong>{{ userName }}</strong>
+          <span>Complainant</span>
+        </div>
+        <span class="profile-status"></span>
+      </div>
+    </header>
+
+    <!-- HERO BANNER -->
+    <section class="hero-banner">
+      <div class="hero-content">
+        <span class="eyebrow">
+          <span class="eyebrow-dot"></span>
+          YOUR VOICE MATTERS
+        </span>
+
+        <h2>Good day, {{ firstName }}!</h2>
+
+        <p>
+          Have a concern? We're here to listen.
+          Submit a complaint, share your feedback, and follow
+          every update in one convenient place.
+        </p>
+
+        <div class="hero-actions">
+          <a routerLink="/complaints" class="primary-action">
+            <span>＋</span> Submit a Complaint
+            <span class="action-arrow">→</span>
+          </a>
+
+          <a routerLink="/my-complaints" class="secondary-action">
+            Track My Complaints
+          </a>
+        </div>
+      </div>
+
+      <div class="hero-visual" aria-hidden="true">
+        <div class="visual-ring ring-one"></div>
+        <div class="visual-ring ring-two"></div>
+        <div class="visual-document">
+          <div class="document-icon">CF</div>
+          <span class="document-line line-long"></span>
+          <span class="document-line line-short"></span>
+          <span class="document-line line-medium"></span>
+          <div class="document-check">✓</div>
+        </div>
+        <div class="floating-badge">
+          <span>✓</span>
+          Your voice matters
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION HEADING -->
+    <div class="section-heading">
+      <div>
+        <h2>Complaint Overview</h2>
+        <p>Monitor the progress of your submitted concerns.</p>
+      </div>
+      <a routerLink="/my-complaints" class="text-link">
+        View all complaints <span>→</span>
+      </a>
+    </div>
+
+    <!-- STATISTICS -->
+    <section class="stats-grid">
+
+      <article class="stat-card total-card">
+        <div class="stat-top">
+          <span class="stat-label">Total Complaints</span>
+          <div class="stat-icon icon-blue">▤</div>
+        </div>
+        <div class="stat-value">{{ totalComplaints }}</div>
+        <div class="stat-bottom">
+          <span class="stat-indicator blue-indicator"></span>
+          <span>All submitted records</span>
+        </div>
+        <div class="stat-accent"></div>
+      </article>
+
+      <article class="stat-card pending-card">
+        <div class="stat-top">
+          <span class="stat-label">Pending</span>
+          <div class="stat-icon icon-orange">◷</div>
+        </div>
+        <div class="stat-value">{{ pendingComplaints }}</div>
+        <div class="stat-bottom">
+          <span class="stat-indicator orange-indicator"></span>
+          <span>Awaiting staff review</span>
+        </div>
+        <div class="stat-accent"></div>
+      </article>
+
+      <article class="stat-card progress-card">
+        <div class="stat-top">
+          <span class="stat-label">In Progress</span>
+          <div class="stat-icon icon-purple">↻</div>
+        </div>
+        <div class="stat-value">{{ inProgressComplaints }}</div>
+        <div class="stat-bottom">
+          <span class="stat-indicator purple-indicator"></span>
+          <span>Currently being handled</span>
+        </div>
+        <div class="stat-accent"></div>
+      </article>
+
+      <article class="stat-card resolved-card">
+        <div class="stat-top">
+          <span class="stat-label">Resolved</span>
+          <div class="stat-icon icon-green">✓</div>
+        </div>
+        <div class="stat-value">{{ resolvedComplaints }}</div>
+        <div class="stat-bottom">
+          <span class="stat-indicator green-indicator"></span>
+          <span>Successfully addressed</span>
+        </div>
+        <div class="stat-accent"></div>
+      </article>
+
+    </section>
+
+    <!-- RECENT COMPLAINTS -->
+    <section class="recent-panel">
+
+      <div class="panel-header">
+        <div>
+          <h2>Recent Complaints</h2>
+          <p>Review the latest status of your submissions.</p>
+        </div>
+
+        <a routerLink="/my-complaints" class="view-all-link">
+          View all <span>→</span>
+        </a>
+      </div>
+
+      <div class="table-responsive">
+        <table class="complaints-table">
+          <thead>
+            <tr>
+              <th>REFERENCE NO.</th>
+              <th>SUBJECT</th>
+              <th>CATEGORY</th>
+              <th>DATE SUBMITTED</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let complaint of recentComplaints">
+              <td>
+                <span class="reference-number">{{ complaint.id }}</span>
+              </td>
+              <td>
+                <div class="subject-cell">
+                  <strong>{{ complaint.title }}</strong>
+                  <span>Complaint record</span>
+                </div>
+              </td>
+              <td>
+                <span class="category-badge">{{ complaint.category }}</span>
+              </td>
+              <td class="date-cell">{{ complaint.date }}</td>
+              <td>
+                <span class="status-badge"
+                      [ngClass]="getStatusClass(complaint.status)">
+                  <span class="status-dot"></span>
+                  {{ complaint.status }}
+                </span>
+              </td>
+            </tr>
+
+            <tr *ngIf="recentComplaints.length === 0">
+              <td colspan="5">
+                <div class="empty-state">
+                  <div class="empty-icon">▤</div>
+                  <strong>No complaints yet</strong>
+                  <p>Your submitted complaints will appear here.</p>
+                  <a routerLink="/complaints">Submit your first complaint →</a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="panel-footer">
+        <span>Showing {{ recentComplaints.length }} recent complaint(s)</span>
+        <span class="footer-note">
+          <span class="footer-check">✓</span>
+          Transparent. Responsive. Accountable.
+        </span>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="page-footer">
+      <span>© 2026 Complaint &amp; Feedback Management System</span>
+      <span>Built to make your voice heard.</span>
+    </footer>
+
+  </main>
+</div>

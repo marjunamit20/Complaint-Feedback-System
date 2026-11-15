@@ -1,0 +1,218 @@
+
+<div class="staff-layout">
+  <aside class="sidebar">
+    <a routerLink="/staff-dashboard" class="brand">
+      <span class="brand-logo">CF</span>
+      <span class="brand-text">
+        <strong>CFMS</strong>
+        <small>Staff Portal</small>
+      </span>
+    </a>
+
+    <p class="menu-label">MAIN MENU</p>
+
+    <nav class="navigation">
+      <a
+        routerLink="/staff-dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }">
+        <span class="nav-icon">▦</span>
+        Dashboard
+      </a>
+
+      <a
+        routerLink="/staff-complaints"
+        routerLinkActive="active">
+        <span class="nav-icon">▤</span>
+        My Assigned Complaints
+      </a>
+
+      <a
+        routerLink="/staff-history"
+        routerLinkActive="active">
+        <span class="nav-icon">◷</span>
+        Complaint History
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="help-card">
+        <strong>Staff Workspace</strong>
+        <p>Manage your assigned complaints and record their progress.</p>
+      </div>
+
+      <a routerLink="/login" class="signout-link">
+        <span>↪</span> Sign Out
+      </a>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">CFMS / STAFF</p>
+        <h1>Staff Dashboard</h1>
+        <p class="subtitle">
+          Monitor assigned complaints and track your work.
+        </p>
+      </div>
+
+      <div class="profile">
+        <div class="avatar">ST</div>
+        <div>
+          <strong>Staff Member</strong>
+          <small>Staff Account</small>
+        </div>
+      </div>
+    </header>
+
+    <section class="welcome-banner">
+      <div class="welcome-content">
+        <span class="banner-label">STAFF WORKSPACE</span>
+        <h2>Welcome to your dashboard</h2>
+        <p>
+          Review assigned complaints, document actions taken, and
+          keep complaint progress updated.
+        </p>
+
+        <a routerLink="/staff-complaints" class="banner-button">
+          View Assigned Complaints
+          <span>→</span>
+        </a>
+      </div>
+
+      <div class="banner-symbol">CF</div>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Total Assigned Complaints</span>
+          <span class="stat-icon blue">▤</span>
+        </div>
+        <h2>{{ totalAssigned }}</h2>
+        <p>Assigned to your account</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Pending / Assigned</span>
+          <span class="stat-icon orange">◷</span>
+        </div>
+        <h2>{{ pendingCount }}</h2>
+        <p>Waiting for action</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>In Progress</span>
+          <span class="stat-icon purple">↻</span>
+        </div>
+        <h2>{{ inProgressCount }}</h2>
+        <p>Currently being handled</p>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span>Resolved Complaints</span>
+          <span class="stat-icon green">✓</span>
+        </div>
+        <h2>{{ resolvedCount }}</h2>
+        <p>Resolved or closed</p>
+      </article>
+    </section>
+
+    <section class="records-card">
+      <div class="records-header">
+        <div>
+          <h2>Recent Assigned Complaints</h2>
+          <p>Complaints assigned to your staff account.</p>
+        </div>
+
+        <a routerLink="/staff-complaints" class="view-all">
+          View All <span>→</span>
+        </a>
+      </div>
+
+      <div *ngIf="errorMessage" class="notice error">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="loading" class="empty-state">
+        <p>Loading complaints...</p>
+      </div>
+
+      <div
+        *ngIf="!loading && !errorMessage && recentComplaints.length === 0"
+        class="empty-state">
+
+        <div class="empty-icon">▤</div>
+        <h3>No assigned complaints yet</h3>
+        <p>
+          When the Admin assigns complaints to your account,
+          they will appear here.
+        </p>
+      </div>
+
+      <div
+        *ngIf="!loading && recentComplaints.length > 0"
+        class="table-wrapper">
+
+        <table>
+          <thead>
+            <tr>
+              <th>Reference Number</th>
+              <th>Complaint</th>
+              <th>Category</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let complaint of recentComplaints">
+              <td class="reference">{{ complaint.id }}</td>
+
+              <td>
+                <strong>{{ complaint.subject }}</strong>
+                <small>{{ complaint.location }}</small>
+              </td>
+
+              <td>{{ complaint.category }}</td>
+
+              <td>
+                <span
+                  class="priority"
+                  [ngClass]="complaint.priority.toLowerCase()">
+                  {{ complaint.priority }}
+                </span>
+              </td>
+
+              <td>
+                <span
+                  class="status"
+                  [ngClass]="complaint.status.toLowerCase().replace(' ', '-')">
+                  {{ complaint.status }}
+                </span>
+              </td>
+
+              <td>
+                <a
+                  [routerLink]="['/staff-complaints', complaint.id]"
+                  class="view-button">
+                  View Details
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <span>CFMS — Complaint and Feedback Management System</span>
+      <span>Staff Portal</span>
+    </footer>
+  </main>
+</div>

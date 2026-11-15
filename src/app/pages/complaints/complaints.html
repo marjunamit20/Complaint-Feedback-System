@@ -1,0 +1,270 @@
+
+<div class="cfms-layout">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">CF</div>
+      <div>
+        <h2>CFMS</h2>
+        <p>Complaint Management</p>
+      </div>
+    </div>
+
+    <div class="menu-label">MAIN MENU</div>
+
+    <nav class="navigation">
+      <a routerLink="/dashboard" routerLinkActive="active"
+         [routerLinkActiveOptions]="{ exact: true }">
+        <span class="nav-icon">⌂</span>
+        <span>Dashboard</span>
+      </a>
+
+      <a routerLink="/complaints" routerLinkActive="active">
+        <span class="nav-icon">＋</span>
+        <span>Submit Complaint</span>
+      </a>
+
+      <a routerLink="/my-complaints" routerLinkActive="active">
+        <span class="nav-icon">▤</span>
+        <span>My Complaints</span>
+      </a>
+
+      <a routerLink="/feedback" routerLinkActive="active">
+        <span class="nav-icon">☆</span>
+        <span>Feedback</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="help-card">
+        <div class="help-icon">?</div>
+        <h4>Need assistance?</h4>
+        <p>Contact your assigned staff for help with your concern.</p>
+      </div>
+
+      <button class="signout-button" type="button" (click)="signOut()">
+        ↪ &nbsp; Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="breadcrumb">CFMS / <strong>Submit Complaint</strong></div>
+
+      <div class="profile">
+        <div class="avatar">{{ initials }}</div>
+        <div>
+          <strong>{{ userName }}</strong>
+          <small>Complainant</small>
+        </div>
+      </div>
+    </header>
+
+    <section class="page-heading">
+      <div>
+        <span class="eyebrow">COMPLAINT CENTER</span>
+        <h1>Submit a Complaint</h1>
+        <p>Tell us about your concern. We are here to listen and help resolve the issue.</p>
+      </div>
+      <div class="heading-icon">✉</div>
+    </section>
+
+    <section class="notice">
+      <div class="notice-icon">i</div>
+      <div>
+        <strong>Your voice matters.</strong>
+        <p>Please provide accurate information so our staff can review and address your complaint.</p>
+      </div>
+    </section>
+
+    <form class="complaint-form"
+          (ngSubmit)="submitComplaint()"
+          #complaintForm="ngForm">
+
+      <div class="form-heading">
+        <div>
+          <h2>Complaint Information</h2>
+          <p>Fields marked with * are required.</p>
+        </div>
+        <span class="required-label">* Required</span>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <div class="form-group">
+        <label for="subject">Complaint Subject <span>*</span></label>
+        <input
+          id="subject"
+          name="subject"
+          type="text"
+          [(ngModel)]="complaint.subject"
+          #subject="ngModel"
+          placeholder="Briefly describe your concern"
+          maxlength="120"
+          required
+        />
+        <small class="field-help">Example: Delayed service or damaged facility</small>
+        <small class="error-message"
+               *ngIf="subject.invalid && (subject.touched || complaintForm.submitted)">
+          Please enter a complaint subject.
+        </small>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="category">Complaint Category <span>*</span></label>
+          <select
+            id="category"
+            name="category"
+            [(ngModel)]="complaint.category"
+            #category="ngModel"
+            required
+          >
+            <option value="" disabled>Select a category</option>
+            <option *ngFor="let item of categories" [value]="item">
+              {{ item }}
+            </option>
+          </select>
+          <small class="error-message"
+                 *ngIf="category.invalid && (category.touched || complaintForm.submitted)">
+            Please select a category.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="priority">Priority</label>
+          <select id="priority" name="priority" [(ngModel)]="complaint.priority">
+            <option *ngFor="let item of priorities" [value]="item">
+              {{ item }}
+            </option>
+          </select>
+          <small class="field-help">Select the urgency of your concern.</small>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="location">Location / Office <span>*</span></label>
+        <input
+          id="location"
+          name="location"
+          type="text"
+          [(ngModel)]="complaint.location"
+          #location="ngModel"
+          placeholder="Enter the affected location or office"
+          maxlength="200"
+          required
+        />
+        <small class="error-message"
+               *ngIf="location.invalid && (location.touched || complaintForm.submitted)">
+          Please enter the affected location.
+        </small>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Complaint Description <span>*</span></label>
+        <textarea
+          id="description"
+          name="description"
+          [(ngModel)]="complaint.description"
+          #description="ngModel"
+          rows="6"
+          maxlength="3000"
+          placeholder="Explain what happened, when it happened, and other relevant details..."
+          required
+        ></textarea>
+        <div class="textarea-footer">
+          <small>Provide enough details to help us understand your concern.</small>
+          <small>{{ complaint.description.length }}/3000</small>
+        </div>
+        <small class="error-message"
+               *ngIf="description.invalid && (description.touched || complaintForm.submitted)">
+          Please describe your complaint.
+        </small>
+      </div>
+
+      <!-- MULTIPLE IMAGE UPLOAD -->
+      <div class="form-group">
+        <label>Supporting Images <span class="optional">(Optional)</span></label>
+
+        <div class="image-upload-area" *ngIf="selectedImages.length < maxImages">
+          <input
+            #imageInput
+            id="complaint-file"
+            class="image-file-input"
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+            (change)="onFilesSelected($event)"
+          />
+
+          <button
+            type="button"
+            class="upload-trigger"
+            (click)="imageInput.click()"
+          >
+            <span class="upload-icon">＋</span>
+            <strong>Click to upload images</strong>
+            <span>Select multiple pictures from your device</span>
+            <small>JPG, PNG, WEBP · Maximum 5 images · 500 KB each</small>
+          </button>
+        </div>
+
+        <div class="image-upload-meta">
+          <span>{{ selectedImages.length }} of {{ maxImages }} images selected</span>
+          <button
+            *ngIf="selectedImages.length > 0"
+            type="button"
+            class="clear-images"
+            (click)="selectedImages = []"
+          >
+            Remove all
+          </button>
+        </div>
+
+        <div class="image-preview-grid" *ngIf="selectedImages.length > 0">
+          <div class="image-preview-card"
+               *ngFor="let image of selectedImages; let i = index">
+
+            <img [src]="image.preview" [alt]="image.name" />
+
+            <button
+              type="button"
+              class="remove-image-button"
+              (click)="removeImage(i)"
+              [attr.aria-label]="'Remove ' + image.name"
+              title="Remove image"
+            >
+              ×
+            </button>
+
+            <div class="image-preview-info">
+              <strong [title]="image.name">{{ image.name }}</strong>
+              <small>{{ (image.size / 1024).toFixed(1) }} KB</small>
+            </div>
+          </div>
+        </div>
+
+        <p class="upload-note">
+          Upload clear pictures that help explain your complaint.
+        </p>
+      </div>
+
+      <div class="form-divider"></div>
+
+      <div class="form-actions">
+        <button type="button" class="cancel-button" (click)="goToDashboard()">
+          Cancel
+        </button>
+
+        <button type="submit" class="submit-button" [disabled]="isSubmitting">
+          {{ isSubmitting ? 'Submitting...' : '➤ Submit Complaint' }}
+        </button>
+      </div>
+    </form>
+
+    <footer class="page-footer">
+      <span>© 2026 Complaint and Feedback Management System</span>
+      <span>Transparent. Responsive. Accountable.</span>
+    </footer>
+  </main>
+</div>

@@ -1,0 +1,262 @@
+
+:host {
+  display: block;
+  min-height: 100vh;
+  font-family: Inter, "Segoe UI", Arial, sans-serif;
+  color: #172b46;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.login-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+  background: #fff;
+}
+
+.brand-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 64px;
+  color: #fff;
+  background: linear-gradient(145deg, #19395f, #0b1c32);
+}
+
+.brand-content {
+  width: 100%;
+  max-width: 480px;
+}
+
+.brand-logo {
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  margin-bottom: 48px;
+  border: 1px solid #57718e;
+  border-radius: 18px;
+  background: #ffffff12;
+  font-family: Georgia, serif;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+.eyebrow,
+.form-eyebrow {
+  color: #427cff;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+}
+
+.brand-panel .eyebrow {
+  color: #9dbdff;
+}
+
+.brand-content h1 {
+  margin: 20px 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(34px, 3.5vw, 49px);
+  line-height: 1.18;
+  letter-spacing: -1.3px;
+}
+
+.brand-content > p {
+  max-width: 410px;
+  color: #d0dbea;
+  font-size: 15px;
+  line-height: 1.9;
+}
+
+.brand-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 70px;
+  color: #dce7f5;
+  font-size: 12px;
+}
+
+.brand-footer strong {
+  color: #fff;
+}
+
+.form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.form-wrapper {
+  width: 100%;
+  max-width: 440px;
+}
+
+.form-wrapper h2 {
+  margin: 14px 0 8px;
+  color: #183353;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 34px;
+  letter-spacing: -0.7px;
+}
+
+.subtitle {
+  margin: 0 0 34px;
+  color: #7a8ba2;
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 22px;
+}
+
+.form-group label {
+  color: #243b56;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.form-group input {
+  width: 100%;
+  height: 51px;
+  padding: 0 14px;
+  border: 1px solid #dce4ee;
+  border-radius: 9px;
+  outline: none;
+  background: #fff;
+  color: #183353;
+  font-size: 14px;
+}
+
+.form-group input::placeholder {
+  color: #a2afbf;
+}
+
+.form-group input:focus {
+  border-color: #3869b1;
+  box-shadow: 0 0 0 3px #3869b11a;
+}
+
+.password-wrapper {
+  position: relative;
+}
+
+.password-wrapper input {
+  padding-right: 65px;
+}
+
+.show-button {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: #234f8c;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.submit-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: 51px;
+  margin-top: 8px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 9px;
+  background: #19395f;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.submit-button:hover {
+  background: #275287;
+  transform: translateY(-1px);
+}
+
+.security-note,
+.staff-note {
+  color: #8492a5;
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.7;
+}
+
+.security-note {
+  margin-top: 25px;
+}
+
+.signin-text {
+  margin-top: 26px;
+  color: #74849a;
+  font-size: 13px;
+  text-align: center;
+}
+
+.signin-text a {
+  color: #24589b;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.signin-text a:hover {
+  text-decoration: underline;
+}
+
+.staff-note {
+  margin-top: 28px;
+}
+
+@media (max-width: 850px) {
+  .login-container {
+    grid-template-columns: 1fr;
+  }
+
+  .brand-panel {
+    padding: 35px 28px;
+  }
+
+  .brand-logo {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 25px;
+  }
+
+  .brand-content h1 {
+    font-size: 34px;
+  }
+
+  .brand-footer {
+    margin-top: 28px;
+  }
+
+  .form-panel {
+    padding: 40px 24px;
+  }
+}
+
+@media (max-width: 420px) {
+  .brand-content h1 {
+    font-size: 29px;
+  }
+
+  .form-wrapper h2 {
+    font-size: 29px;
+  }
+}

@@ -1,0 +1,270 @@
+<div class="app-layout">
+  <!-- Dark Navy Sidebar matching Dashboard -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-logo">CF</div>
+      <div>
+        <h2>CFMS</h2>
+        <span>Complaint &amp; Feedback</span>
+      </div>
+    </div>
+
+    <div class="menu-label">MAIN MENU</div>
+
+    <nav class="navigation">
+      <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">⌂</span> Dashboard
+      </a>
+
+      <a routerLink="/complaints" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">＋</span> Submit Complaint
+      </a>
+
+      <a routerLink="/my-complaints" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">▤</span> My Complaints
+      </a>
+
+      <a routerLink="/feedback" routerLinkActive="active" class="nav-item">
+        <span class="nav-icon">☆</span> Feedback
+      </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <div class="help-card">
+        <div class="help-icon">?</div>
+        <strong>We value your opinion</strong>
+        <p>Your feedback helps us improve our public service.</p>
+      </div>
+
+      <button type="button" class="logout-button" (click)="logout()">
+        <span>↪</span> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main Content Area -->
+  <main class="main-content">
+    <!-- Top Navy Banner matching Dashboard -->
+    <header class="welcome-banner">
+      <div class="banner-left">
+        <div class="banner-icon">☆</div>
+        <div class="banner-copy">
+          <span class="eyebrow">YOUR VOICE MATTERS</span>
+          <h1>Feedback Center</h1>
+          <p>Share your experience, rate our service, and tell us where we can improve.</p>
+        </div>
+      </div>
+
+      <div class="profile">
+        <div class="profile-avatar">R</div>
+        <div class="profile-details">
+          <strong>Resident</strong>
+          <span>Complainant Account</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Two-Column Feedback Content -->
+    <div class="feedback-layout">
+      <!-- Left Form Card -->
+      <section class="feedback-panel">
+        <div class="panel-heading">
+          <h2>Share Your Feedback</h2>
+          <p>Submit general suggestions or rate how your resolved complaint was handled.</p>
+        </div>
+
+        @if (successMessage) {
+          <div class="alert success-alert">✓ {{ successMessage }}</div>
+        }
+
+        @if (errorMessage) {
+          <div class="alert error-alert">! {{ errorMessage }}</div>
+        }
+
+        <form (ngSubmit)="submitFeedback()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="feedbackType">Feedback Category</label>
+              <select
+                id="feedbackType"
+                name="feedbackType"
+                [(ngModel)]="feedbackType"
+                (change)="onTypeChange()"
+              >
+                <option value="General Feedback">General Feedback / Suggestion</option>
+                <option value="Post-Resolution">Post-Resolution Complaint Rating</option>
+              </select>
+            </div>
+
+            @if (feedbackType === 'Post-Resolution') {
+              <div class="form-group">
+                <label for="complaintRef">Resolved Complaint Ref #</label>
+                <select
+                  id="complaintRef"
+                  name="complaintRef"
+                  [(ngModel)]="selectedComplaintRef"
+                  (change)="onTypeChange()"
+                  required
+                >
+                  <option value="" disabled>-- Select resolved complaint --</option>
+                  @for (c of resolvedComplaints; track c.refNo) {
+                    <option [value]="c.refNo">{{ c.refNo }} — {{ c.title }}</option>
+                  }
+                </select>
+              </div>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="subject">Feedback Subject</label>
+            <input
+              id="subject"
+              name="subject"
+              type="text"
+              [(ngModel)]="subject"
+              placeholder="e.g. Fast response on facility maintenance"
+              maxlength="120"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label>How would you rate our service?</label>
+
+            <div class="rating-options">
+              @for (star of [1, 2, 3, 4, 5]; track star) {
+                <button
+                  type="button"
+                  class="star-button"
+                  [class.selected]="star <= (hoverRating || rating)"
+                  (mouseenter)="hoverRating = star"
+                  (mouseleave)="hoverRating = 0"
+                  [attr.aria-label]="'Rate ' + star + ' out of 5'"
+                  [attr.aria-pressed]="star === rating"
+                  (click)="setRating(star)"
+                >★</button>
+              }
+            </div>
+
+            <div class="rating-caption">
+              @if (rating === 0) {
+                Select a rating from 1 to 5 stars.
+              } @else if (rating === 1) {
+                1 out of 5 — Poor
+              } @else if (rating === 2) {
+                2 out of 5 — Fair
+              } @else if (rating === 3) {
+                3 out of 5 — Good
+              } @else if (rating === 4) {
+                4 out of 5 — Very Good
+              } @else {
+                5 out of 5 — Excellent
+              }
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="message">Your Feedback</label>
+            <textarea
+              id="message"
+              name="message"
+              [(ngModel)]="message"
+              placeholder="Tell us about your experience or suggest improvements..."
+              rows="5"
+              maxlength="2000"
+              required
+            ></textarea>
+
+            <div class="character-count">
+              {{ message.length }} / 2000 characters
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="secondary-button" (click)="goToDashboard()">
+              Cancel
+            </button>
+            <button type="submit" class="primary-button">
+              Submit Feedback <span>→</span>
+            </button>
+          </div>
+        </form>
+
+        <div class="privacy-note">
+          <span>🔒</span>
+          <p>Please avoid including passwords or other sensitive personal information in your feedback.</p>
+        </div>
+      </section>
+
+      <!-- Right Column Cards -->
+      <aside class="right-column">
+        <section class="info-card">
+          <div class="info-icon">✓</div>
+          <h3>Why your feedback matters</h3>
+          <p>Your comments help identify service bottlenecks, improve complaint handling, and strengthen accountability.</p>
+        </section>
+
+        <section class="history-card">
+          <div class="history-heading">
+            <h3>Your Recent Feedback</h3>
+            <span class="count-pill">{{ feedbackRecords.length }}</span>
+          </div>
+
+          @if (feedbackRecords.length === 0) {
+            <div class="history-empty">
+              <div class="empty-icon">☆</div>
+              <p>No feedback submitted yet.</p>
+              <span>Your submitted feedback will appear here.</span>
+            </div>
+          } @else {
+            <div class="history-list">
+              @for (item of feedbackRecords; track item.id) {
+                <article class="history-item">
+                  <div class="history-item-top">
+                    <div>
+                      <strong>{{ item.subject }}</strong>
+                      @if (item.complaintRef) {
+                        <span class="ref-tag">{{ item.complaintRef }}</span>
+                      }
+                    </div>
+                    <button
+                      type="button"
+                      class="remove-btn"
+                      title="Remove feedback"
+                      (click)="deleteFeedback(item.id)"
+                    >×</button>
+                  </div>
+
+                  <div class="history-meta">
+                    <div class="mini-rating">
+                      @for (star of [1, 2, 3, 4, 5]; track star) {
+                        <span [class.filled]="star <= item.rating">★</span>
+                      }
+                    </div>
+                    <span class="history-date">{{ item.date | date:'MMM d, y' }}</span>
+                  </div>
+
+                  <p>{{ item.message }}</p>
+                </article>
+              }
+            </div>
+          }
+        </section>
+
+        <button class="link-card" type="button" (click)="goToMyComplaints()">
+          <span class="link-icon">▤</span>
+          <span>
+            <strong>View My Complaints</strong>
+            <small>Check the progress of your concerns</small>
+          </span>
+          <b>→</b>
+        </button>
+      </aside>
+    </div>
+
+    <footer class="page-footer">
+      <span>© 2026 Complaint &amp; Feedback Management System</span>
+      <span>Transparent. Responsive. Accountable.</span>
+    </footer>
+  </main>
+</div>
